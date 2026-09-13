@@ -329,9 +329,9 @@
 <script>
 (function () {
     // WebMCP — expose three read-only tools to in-page AI agents.
-    // The API is still a draft: try navigator.modelContext first, then document.modelContext.
-    var modelContext = (typeof navigator !== 'undefined' && navigator.modelContext)
-                    || (typeof document !== 'undefined' && document.modelContext);
+    // Chrome 150+ moved the getter from navigator to Document; check Document first.
+    var modelContext = (typeof document !== 'undefined' && document.modelContext)
+                    || (typeof navigator !== 'undefined' && navigator.modelContext);
 
     var PERSONAL_INFO = {
         name: "Jack Angel Lucas",
@@ -357,7 +357,11 @@
 
     function register(tool) {
         if (!modelContext || typeof modelContext.registerTool !== 'function') return;
-        try { modelContext.registerTool(tool); } catch (e) { /* ignore spec mismatches */ }
+        try {
+            // Chrome 151+ returns a Promise; older builds return undefined.
+            var result = modelContext.registerTool(tool);
+            if (result && typeof result.then === 'function') result.catch(function () {});
+        } catch (err) { /* ignore spec mismatches */ }
     }
 
     function registerIntro() {

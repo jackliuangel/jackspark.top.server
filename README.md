@@ -1,5 +1,6 @@
 # jackspark.top.server
 ## server to host vless, nginx, react app and ssh and more
+## support webMCP
 
 
 
@@ -162,3 +163,5 @@ ssh lightsail "sudo systemctl reload nginx"
 - 验证源站证书到期时间
 ssh lightsail "sudo certbot certificates"
 
+# How to renew orgin token for renew WebMCP
+- https://developer.chrome.com/origintrials/#/trials/my
