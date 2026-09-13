@@ -7,12 +7,12 @@ description: How to setup nginx server and deploy a new react app to lightsail
 This workflow details the steps to deploy a new React web app to the Lightsail nginx server based on the README. Throughout these instructions, replace `foobar` with the actual name of your app.
 
 1. **Create DNS Record**
-   In Cloudflare, create a new DNS record for your app's subdomain (e.g., `foobar.jackangellucaslabs.top`) pointing to the Lightsail IP address.
+   In Cloudflare, create a new DNS record for your app's subdomain (e.g., `foobar.jackspark.top`) pointing to the Lightsail IP address.
 
 2. **Generate HTTPS Certificate**
    SSH into the nginx server and generate an SSL certificate using Certbot:
    ```bash
-   sudo certbot certonly --nginx -d foobar.jackangellucaslabs.top
+   sudo certbot certonly --nginx -d foobar.jackspark.top
    ```
    *(Note: `sudo certbot certificates` lists all certificates managed by Certbot)*
 
@@ -24,13 +24,13 @@ This workflow details the steps to deploy a new React web app to the Lightsail n
 
 4. **Prepare Nginx Configuration**
    Prepare an nginx configuration file named `foobar-subdomain` by referencing an existing one (e.g. `etc/nginx/sites-available/foobar-subdomain`). Place this file in your server repo path:
-   `/home/ubuntu/jackangellucaslabs.top.server/etc/nginx/sites-available/foobar-subdomain`
+   `/home/ubuntu/jackspark.top.server/etc/nginx/sites-available/foobar-subdomain`
    *(You can sync this over to the remote server via Git push/pull, or using SCP.)*
 
 5. **Create Soft Link in `sites-available`**
    On the nginx server, create a symlink in the `/etc/nginx/sites-available` directory pointing to the repository's configuration file:
    ```bash
-   sudo ln -sf /home/ubuntu/jackangellucaslabs.top.server/etc/nginx/sites-available/foobar-subdomain /etc/nginx/sites-available/foobar-subdomain
+   sudo ln -sf /home/ubuntu/jackspark.top.server/etc/nginx/sites-available/foobar-subdomain /etc/nginx/sites-available/foobar-subdomain
    ```
 
 6. **Create Soft Link in `sites-enabled`**
