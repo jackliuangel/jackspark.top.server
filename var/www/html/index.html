@@ -6,9 +6,6 @@
 <title>Jack Angel Lucas — the lab</title>
 <meta name="description" content="Personal lab of Jack Angel Lucas — toys, games and small tools built on a home server.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B4965'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2362B6CB'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
     :root {
         --paper:   #FFFFFF;
@@ -27,7 +24,7 @@
     }
 
     body {
-        font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         font-size: 16px;
         line-height: 1.6;
         color: var(--ink);
@@ -40,8 +37,8 @@
         outline-offset: 3px;
     }
 
-    .display { font-family: "Bricolage Grotesque", "IBM Plex Sans", sans-serif; }
-    .mono    { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+    .display { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+    .mono    { font-family: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace; }
 
     .wrap {
         width: min(1080px, 100% - 48px);
@@ -62,7 +59,7 @@
         padding: 18px 0;
     }
     .wordmark {
-        font-family: "Bricolage Grotesque", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         font-weight: 600;
         font-size: 1.05rem;
         letter-spacing: -0.01em;
@@ -90,7 +87,7 @@
         align-items: center;
     }
     .hero-name {
-        font-family: "Bricolage Grotesque", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         font-weight: 700;
         font-size: clamp(2.75rem, 8.5vw, 6.5rem);
         line-height: 0.96;
@@ -117,7 +114,7 @@
         gap: 10px;
         background: var(--paper);
         color: var(--yale);
-        font-family: "IBM Plex Sans", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         font-weight: 600;
         font-size: 1rem;
         padding: 14px 22px;
@@ -166,7 +163,7 @@
         align-items: center;
     }
     .about h2, .experiments h2, .tools h2 {
-        font-family: "Bricolage Grotesque", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         font-weight: 600;
         font-size: clamp(1.75rem, 4vw, 2.5rem);
         letter-spacing: -0.015em;
@@ -207,7 +204,7 @@
     }
     .exp-row:hover .exp-name { color: var(--yale); text-decoration: underline; text-decoration-color: var(--pacific); text-underline-offset: 4px; }
     .exp-name {
-        font-family: "Bricolage Grotesque", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         font-weight: 600;
         font-size: 1.3rem;
         letter-spacing: -0.01em;
@@ -215,7 +212,7 @@
     }
     .exp-desc { color: var(--muted); }
     .exp-tech {
-        font-family: "IBM Plex Mono", monospace;
+        font-family: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
         font-size: 0.8rem;
         color: var(--muted);
         white-space: nowrap;
@@ -233,7 +230,7 @@
         border-bottom: 1px solid var(--rule);
     }
     .tool-name {
-        font-family: "IBM Plex Mono", monospace;
+        font-family: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
         font-weight: 500;
         font-size: 1rem;
         color: var(--ink);
