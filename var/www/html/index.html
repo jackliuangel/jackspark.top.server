@@ -106,27 +106,7 @@
         font-size: clamp(1.05rem, 2vw, 1.3rem);
         color: rgba(255, 255, 255, 0.92);
         max-width: 32ch;
-        margin-bottom: 32px;
     }
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: var(--paper);
-        color: var(--yale);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 14px 22px;
-        border-radius: 8px;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-        transition: background 0.15s ease, transform 0.15s ease;
-    }
-    .btn:hover { background: var(--mist); }
-    .btn:active { transform: translateY(1px); }
-    .btn .arrow { font-size: 0.9em; }
 
     .hero-meta {
         display: flex;
@@ -154,7 +134,6 @@
     /* ---------- sections ---------- */
     .section { padding: clamp(72px, 12vh, 120px) 0; }
     .about { background: var(--paper); }
-    .experiments { background: var(--mist); }
 
     .about-grid {
         display: grid;
@@ -162,7 +141,7 @@
         gap: clamp(32px, 6vw, 80px);
         align-items: center;
     }
-    .about h2, .experiments h2, .tools h2 {
+    .about h2, .tools h2 {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         font-weight: 600;
         font-size: clamp(1.75rem, 4vw, 2.5rem);
@@ -185,41 +164,14 @@
     }
     .about-fig .fig-cap { color: var(--muted); }
 
-    /* ---------- experiments ---------- */
     .lead {
         max-width: 34rem;
         color: var(--muted);
         margin-bottom: 40px;
     }
-    .exp-list { border-top: 1px solid var(--rule); }
-    .exp-row {
-        display: grid;
-        grid-template-columns: minmax(9rem, 1fr) 2fr auto;
-        gap: 24px;
-        align-items: baseline;
-        padding: 22px 0;
-        border-bottom: 1px solid var(--rule);
-        text-decoration: none;
-        color: inherit;
-    }
-    .exp-row:hover .exp-name { color: var(--yale); text-decoration: underline; text-decoration-color: var(--pacific); text-underline-offset: 4px; }
-    .exp-name {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-        font-weight: 600;
-        font-size: 1.3rem;
-        letter-spacing: -0.01em;
-        color: var(--ink);
-    }
-    .exp-desc { color: var(--muted); }
-    .exp-tech {
-        font-family: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
-        font-size: 0.8rem;
-        color: var(--muted);
-        white-space: nowrap;
-    }
 
     /* ---------- tools ---------- */
-    .tools { background: var(--paper); }
+    .tools { background: var(--mist); }
     .tool-list { list-style: none; border-top: 1px solid var(--rule); }
     .tool-row {
         display: grid;
@@ -285,11 +237,6 @@
         .hero-fig { order: 2; }
         .hero-fig img { max-width: 360px; }
         .about-fig img { max-width: 360px; }
-        .exp-row {
-            grid-template-columns: 1fr;
-            gap: 6px;
-        }
-        .exp-tech { white-space: normal; }
         .tool-row {
             grid-template-columns: 1fr;
             gap: 6px;
@@ -306,7 +253,7 @@
         <a class="wordmark" href="#">Jack Angel Lucas</a>
         <nav class="nav" aria-label="Primary">
             <a href="#about">about</a>
-            <a href="#experiments">experiments</a>
+            <a href="#tools">tools</a>
             <a href="#contact">contact</a>
         </nav>
     </div>
@@ -318,7 +265,6 @@
             <div class="hero-copy">
                 <h1 class="hero-name">Jack Angel<br>Lucas</h1>
                 <p class="hero-sub">building toys &amp; games on a home server</p>
-                <a class="btn" href="#experiments">Browse experiments <span class="arrow" aria-hidden="true">↓</span></a>
                 <div class="hero-meta mono">
                     <span>jackspark.top</span>
                     <span>since Oct 2024</span>
@@ -341,61 +287,6 @@
                 <img src="/images/room2.jpg" alt="A corner of Jack's study" width="800" height="800" loading="lazy">
                 <figcaption class="fig-cap mono">the workbench</figcaption>
             </figure>
-        </div>
-    </section>
-
-    <section class="section experiments" id="experiments">
-        <div class="wrap">
-            <h2>Experiments</h2>
-            <p class="lead">Small things I&rsquo;ve built to learn.</p>
-
-            <div class="exp-list">
-                <a class="exp-row" href="/gallery/">
-                    <span class="exp-name">gallery</span>
-                    <span class="exp-desc">a picture gallery</span>
-                    <span class="exp-tech">HTML, Tailwind</span>
-                </a>
-                <a class="exp-row" href="/pose/">
-                    <span class="exp-name">pose</span>
-                    <span class="exp-desc">a pose playground</span>
-                    <span class="exp-tech">HTML, JavaScript</span>
-                </a>
-                <a class="exp-row" href="https://monster.jackspark.top">
-                    <span class="exp-name">monster</span>
-                    <span class="exp-desc">a React starter, from a tutorial</span>
-                    <span class="exp-tech">React</span>
-                </a>
-                <a class="exp-row" href="https://x.jackspark.top">
-                    <span class="exp-name">x</span>
-                    <span class="exp-desc">a to-do dashboard</span>
-                    <span class="exp-tech">React Native, Expo</span>
-                </a>
-                <a class="exp-row" href="https://land.jackspark.top">
-                    <span class="exp-name">land</span>
-                    <span class="exp-desc">a little city builder</span>
-                    <span class="exp-tech">React Native, Three.js</span>
-                </a>
-                <a class="exp-row" href="https://guess.jackspark.top">
-                    <span class="exp-name">guess</span>
-                    <span class="exp-desc">draw, and the AI colors it in like clay</span>
-                    <span class="exp-tech">Next.js</span>
-                </a>
-                <a class="exp-row" href="https://grnr.jackspark.top">
-                    <span class="exp-name">grnr</span>
-                    <span class="exp-desc">a gauge repeatability study, for Tony</span>
-                    <span class="exp-tech">React</span>
-                </a>
-                <a class="exp-row" href="/dd/">
-                    <span class="exp-name">dd</span>
-                    <span class="exp-desc">a skipping-stone game, for Lucas</span>
-                    <span class="exp-tech">Babylon.js</span>
-                </a>
-                <a class="exp-row" href="/tank/">
-                    <span class="exp-name">tank</span>
-                    <span class="exp-desc">a tank game</span>
-                    <span class="exp-tech">Babylon.js</span>
-                </a>
-            </div>
         </div>
     </section>
 
@@ -429,7 +320,7 @@
     <div class="wrap footer-inner">
         <a class="wordmark" href="#">Jack Angel Lucas</a>
         <div class="footer-meta">
-            <a class="mono" href="mailto:hello@jackspark.top">hello@jackspark.top</a>
+            <a class="mono" href="mailto:angelababy.jackson@gmail.com">angelababy.jackson@gmail.com</a>
             <span class="mono">webmcp: <a href="#tools">3 tools</a></span>
             <span>Built on a Lightsail instance in my study.</span>
         </div>
@@ -446,7 +337,7 @@
     var PERSONAL_INFO = {
         name: "Jack Angel Lucas",
         site: "jackspark.top",
-        email: "hello@jackspark.top",
+        email: "angelababy.jackson@gmail.com",
         location: "",
         bio: "I build small games and tools to learn how the web works, mostly for my kids, on a server in my study.",
         since: "Oct 2024"
@@ -495,7 +386,7 @@
     function registerShowPages() {
         register({
             name: "showPages",
-            description: "List the pages and experiments hosted on this site.",
+            description: "List the pages hosted on this site.",
             inputSchema: { type: "object", properties: {} },
             annotations: { readOnlyHint: true },
             execute: async function () { return { pages: PAGES }; }
