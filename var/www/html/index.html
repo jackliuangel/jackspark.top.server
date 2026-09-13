@@ -1,23 +1,543 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>The great toys stuff made from Jack's Park</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jack Angel Lucas — the lab</title>
+<meta name="description" content="Personal lab of Jack Angel Lucas — toys, games and small tools built on a home server.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B4965'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2362B6CB'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+    :root {
+        --paper:   #FFFFFF;
+        --mist:    #EDF3F6;
+        --pacific: #62B6CB;
+        --yale:    #1B4965;
+        --ink:     #000000;
+        --muted:   #4B6775;
+        --rule:    rgba(27, 73, 101, 0.16);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+    }
+
     body {
-        width: 35em;
-        margin: 0 auto;
-        font-family: Tahoma, Verdana, Arial, sans-serif;
+        font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--ink);
+        background: var(--paper);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--pacific);
+        outline-offset: 3px;
+    }
+
+    .display { font-family: "Bricolage Grotesque", "IBM Plex Sans", sans-serif; }
+    .mono    { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+    .wrap {
+        width: min(1080px, 100% - 48px);
+        margin-inline: auto;
+    }
+
+    /* ---------- header ---------- */
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--paper);
+    }
+    .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+    }
+    .wordmark {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 600;
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        text-decoration: none;
+    }
+    .nav { display: flex; gap: 24px; }
+    .nav a {
+        font-size: 0.95rem;
+        color: var(--muted);
+        text-decoration: none;
+    }
+    .nav a:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--pacific); text-underline-offset: 4px; }
+
+    /* ---------- hero ---------- */
+    .hero {
+        background: var(--yale);
+        color: #fff;
+        padding: clamp(64px, 10vh, 120px) 0;
+    }
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: clamp(32px, 6vw, 80px);
+        align-items: center;
+    }
+    .hero-name {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 700;
+        font-size: clamp(2.75rem, 8.5vw, 6.5rem);
+        line-height: 0.96;
+        letter-spacing: -0.025em;
+        margin-bottom: 24px;
+        animation: rise 0.7s ease-out both;
+    }
+    @keyframes rise {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .hero-name { animation: none; }
+    }
+    .hero-sub {
+        font-size: clamp(1.05rem, 2vw, 1.3rem);
+        color: rgba(255, 255, 255, 0.92);
+        max-width: 32ch;
+        margin-bottom: 32px;
+    }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--paper);
+        color: var(--yale);
+        font-family: "IBM Plex Sans", sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 14px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .btn:hover { background: var(--mist); }
+    .btn:active { transform: translateY(1px); }
+    .btn .arrow { font-size: 0.9em; }
+
+    .hero-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 40px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.66);
+    }
+    .hero-fig { margin: 0; }
+    .hero-fig img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 2px solid var(--pacific);
+        display: block;
+    }
+    .fig-cap {
+        margin-top: 10px;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ---------- sections ---------- */
+    .section { padding: clamp(72px, 12vh, 120px) 0; }
+    .about { background: var(--paper); }
+    .experiments { background: var(--mist); }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: clamp(32px, 6vw, 80px);
+        align-items: center;
+    }
+    .about h2, .experiments h2, .tools h2 {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 600;
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        letter-spacing: -0.015em;
+        color: var(--ink);
+        margin-bottom: 20px;
+    }
+    .about p {
+        max-width: 34rem;
+        font-size: 1.05rem;
+        color: var(--ink);
+    }
+    .about-fig { margin: 0; }
+    .about-fig img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 6px;
+        display: block;
+    }
+    .about-fig .fig-cap { color: var(--muted); }
+
+    /* ---------- experiments ---------- */
+    .lead {
+        max-width: 34rem;
+        color: var(--muted);
+        margin-bottom: 40px;
+    }
+    .exp-list { border-top: 1px solid var(--rule); }
+    .exp-row {
+        display: grid;
+        grid-template-columns: minmax(9rem, 1fr) 2fr auto;
+        gap: 24px;
+        align-items: baseline;
+        padding: 22px 0;
+        border-bottom: 1px solid var(--rule);
+        text-decoration: none;
+        color: inherit;
+    }
+    .exp-row:hover .exp-name { color: var(--yale); text-decoration: underline; text-decoration-color: var(--pacific); text-underline-offset: 4px; }
+    .exp-name {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 600;
+        font-size: 1.3rem;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+    }
+    .exp-desc { color: var(--muted); }
+    .exp-tech {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.8rem;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    /* ---------- tools ---------- */
+    .tools { background: var(--paper); }
+    .tool-list { list-style: none; border-top: 1px solid var(--rule); }
+    .tool-row {
+        display: grid;
+        grid-template-columns: minmax(12rem, 1fr) 2fr auto;
+        gap: 24px;
+        align-items: baseline;
+        padding: 22px 0;
+        border-bottom: 1px solid var(--rule);
+    }
+    .tool-name {
+        font-family: "IBM Plex Mono", monospace;
+        font-weight: 500;
+        font-size: 1rem;
+        color: var(--ink);
+    }
+    .tool-desc { color: var(--muted); }
+    .tool-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+    .tool-status .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--pacific);
+        flex: none;
+    }
+    .tool-row.is-locked { opacity: 0.5; }
+    .tool-row.is-locked .dot { background: var(--muted); }
+
+    /* ---------- footer ---------- */
+    .footer {
+        background: var(--yale);
+        color: #fff;
+        padding: 64px 0 72px;
+    }
+    .footer-inner {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 40px;
+    }
+    .footer .wordmark { color: #fff; }
+    .footer-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.72);
+    }
+    .footer-meta a { color: #fff; text-decoration: none; }
+    .footer-meta a:hover { text-decoration: underline; text-decoration-color: var(--pacific); text-underline-offset: 4px; }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 720px) {
+        .hero-grid, .about-grid {
+            grid-template-columns: 1fr;
+        }
+        .hero-fig { order: 2; }
+        .hero-fig img { max-width: 360px; }
+        .about-fig img { max-width: 360px; }
+        .exp-row {
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
+        .exp-tech { white-space: normal; }
+        .tool-row {
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
+        .tool-status { white-space: normal; }
+        .nav { gap: 18px; }
     }
 </style>
 </head>
 <body>
-<h1>The great toys stuff made from Jack's Park</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. </p>
 
-<img src="/images/room1.jpg" alt="my study room" width="500">
+<header class="header">
+    <div class="wrap header-inner">
+        <a class="wordmark" href="#">Jack Angel Lucas</a>
+        <nav class="nav" aria-label="Primary">
+            <a href="#about">about</a>
+            <a href="#experiments">experiments</a>
+            <a href="#contact">contact</a>
+        </nav>
+    </div>
+</header>
 
+<main>
+    <section class="hero">
+        <div class="wrap hero-grid">
+            <div class="hero-copy">
+                <h1 class="hero-name">Jack Angel<br>Lucas</h1>
+                <p class="hero-sub">building toys &amp; games on a home server</p>
+                <a class="btn" href="#experiments">Browse experiments <span class="arrow" aria-hidden="true">↓</span></a>
+                <div class="hero-meta mono">
+                    <span>jackangellucaslabs.top</span>
+                    <span>since Oct 2024</span>
+                </div>
+            </div>
+            <figure class="hero-fig">
+                <img src="/images/room1.jpg" alt="Jack's study, where the server lives" width="800" height="800">
+                <figcaption class="fig-cap mono">the study</figcaption>
+            </figure>
+        </div>
+    </section>
 
-<p><em>Since <Out></Out>ct,2024</em></p>
+    <section class="section about" id="about">
+        <div class="wrap about-grid">
+            <div>
+                <h2>About</h2>
+                <p>I&rsquo;m Jack. I build small games and tools to learn how the web works — mostly for my kids, and mostly on a server that lives in my study. Everything here is a work in progress, made by hand.</p>
+            </div>
+            <figure class="about-fig">
+                <img src="/images/room2.jpg" alt="A corner of Jack's study" width="800" height="800" loading="lazy">
+                <figcaption class="fig-cap mono">the workbench</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section class="section experiments" id="experiments">
+        <div class="wrap">
+            <h2>Experiments</h2>
+            <p class="lead">Small things I&rsquo;ve built to learn.</p>
+
+            <div class="exp-list">
+                <a class="exp-row" href="/gallery/">
+                    <span class="exp-name">gallery</span>
+                    <span class="exp-desc">a picture gallery</span>
+                    <span class="exp-tech">HTML, Tailwind</span>
+                </a>
+                <a class="exp-row" href="/pose/">
+                    <span class="exp-name">pose</span>
+                    <span class="exp-desc">a pose playground</span>
+                    <span class="exp-tech">HTML, JavaScript</span>
+                </a>
+                <a class="exp-row" href="https://monster.jackangellucaslabs.top">
+                    <span class="exp-name">monster</span>
+                    <span class="exp-desc">a React starter, from a tutorial</span>
+                    <span class="exp-tech">React</span>
+                </a>
+                <a class="exp-row" href="https://x.jackangellucaslabs.top">
+                    <span class="exp-name">x</span>
+                    <span class="exp-desc">a to-do dashboard</span>
+                    <span class="exp-tech">React Native, Expo</span>
+                </a>
+                <a class="exp-row" href="https://land.jackangellucaslabs.top">
+                    <span class="exp-name">land</span>
+                    <span class="exp-desc">a little city builder</span>
+                    <span class="exp-tech">React Native, Three.js</span>
+                </a>
+                <a class="exp-row" href="https://guess.jackangellucaslabs.top">
+                    <span class="exp-name">guess</span>
+                    <span class="exp-desc">draw, and the AI colors it in like clay</span>
+                    <span class="exp-tech">Next.js</span>
+                </a>
+                <a class="exp-row" href="https://grnr.jackangellucaslabs.top">
+                    <span class="exp-name">grnr</span>
+                    <span class="exp-desc">a gauge repeatability study, for Tony</span>
+                    <span class="exp-tech">React</span>
+                </a>
+                <a class="exp-row" href="/dd/">
+                    <span class="exp-name">dd</span>
+                    <span class="exp-desc">a skipping-stone game, for Lucas</span>
+                    <span class="exp-tech">Babylon.js</span>
+                </a>
+                <a class="exp-row" href="/tank/">
+                    <span class="exp-name">tank</span>
+                    <span class="exp-desc">a tank game</span>
+                    <span class="exp-tech">Babylon.js</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section tools" id="tools">
+        <div class="wrap">
+            <h2>Tools</h2>
+            <p class="lead">Tools this page exposes to AI agents over WebMCP. Two need a client certificate.</p>
+
+            <ul class="tool-list">
+                <li class="tool-row is-available" data-tool="intro">
+                    <span class="tool-name">intro</span>
+                    <span class="tool-desc">Introduce Jack and this site</span>
+                    <span class="tool-status"><span class="dot" aria-hidden="true"></span><span class="tool-status-text">available</span></span>
+                </li>
+                <li class="tool-row is-locked" data-tool="getPersonalInfo">
+                    <span class="tool-name">getPersonalInfo</span>
+                    <span class="tool-desc">Personal details about Jack</span>
+                    <span class="tool-status"><span class="dot" aria-hidden="true"></span><span class="tool-status-text">certificate required</span></span>
+                </li>
+                <li class="tool-row is-locked" data-tool="showPages">
+                    <span class="tool-name">showPages</span>
+                    <span class="tool-desc">A list of everything on this site</span>
+                    <span class="tool-status"><span class="dot" aria-hidden="true"></span><span class="tool-status-text">certificate required</span></span>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main>
+
+<footer class="footer" id="contact">
+    <div class="wrap footer-inner">
+        <a class="wordmark" href="#">Jack Angel Lucas</a>
+        <div class="footer-meta">
+            <a class="mono" href="mailto:hello@jackangellucaslabs.top">hello@jackangellucaslabs.top</a>
+            <span class="mono">webmcp: <a href="#tools">3 tools</a></span>
+            <span>Built on a Lightsail instance in my study.</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+(function () {
+    // WebMCP — expose three read-only tools to in-page AI agents.
+    // The API is still a draft: try navigator.modelContext first, then document.modelContext.
+    var modelContext = (typeof navigator !== 'undefined' && navigator.modelContext)
+                    || (typeof document !== 'undefined' && document.modelContext);
+
+    var PERSONAL_INFO = {
+        name: "Jack Angel Lucas",
+        site: "jackangellucaslabs.top",
+        email: "hello@jackangellucaslabs.top",
+        location: "",
+        bio: "I build small games and tools to learn how the web works, mostly for my kids, on a server in my study.",
+        since: "Oct 2024"
+    };
+
+    var PAGES = [
+        { name: "home",    url: "/",                          note: "this page" },
+        { name: "gallery", url: "/gallery/",                  note: "a picture gallery" },
+        { name: "pose",    url: "/pose/",                     note: "a pose playground" },
+        { name: "monster", url: "https://monster.jackangellucaslabs.top", note: "a React starter" },
+        { name: "x",       url: "https://x.jackangellucaslabs.top",       note: "a to-do dashboard" },
+        { name: "land",    url: "https://land.jackangellucaslabs.top",    note: "a little city builder" },
+        { name: "guess",   url: "https://guess.jackangellucaslabs.top",   note: "draw, the AI colors it like clay" },
+        { name: "grnr",    url: "https://grnr.jackangellucaslabs.top",    note: "a gauge repeatability study" },
+        { name: "dd",      url: "/dd/",                       note: "a skipping-stone game" },
+        { name: "tank",    url: "/tank/",                     note: "a tank game" }
+    ];
+
+    function register(tool) {
+        if (!modelContext || typeof modelContext.registerTool !== 'function') return;
+        try { modelContext.registerTool(tool); } catch (e) { /* ignore spec mismatches */ }
+    }
+
+    function registerIntro() {
+        register({
+            name: "intro",
+            description: "Introduce Jack Angel Lucas and say what this site is.",
+            inputSchema: { type: "object", properties: {} },
+            annotations: { readOnlyHint: true },
+            execute: async function () {
+                return { message: "Hi, I'm Jack. I build small games and tools to learn how the web works, and this site is where they all live." };
+            }
+        });
+    }
+
+    function registerPersonalInfo() {
+        register({
+            name: "getPersonalInfo",
+            description: "Return personal details about Jack Angel Lucas.",
+            inputSchema: { type: "object", properties: {} },
+            annotations: { readOnlyHint: true },
+            execute: async function () { return PERSONAL_INFO; }
+        });
+    }
+
+    function registerShowPages() {
+        register({
+            name: "showPages",
+            description: "List the pages and experiments hosted on this site.",
+            inputSchema: { type: "object", properties: {} },
+            annotations: { readOnlyHint: true },
+            execute: async function () { return { pages: PAGES }; }
+        });
+    }
+
+    function markAvailable(names) {
+        names.forEach(function (name) {
+            var row = document.querySelector('[data-tool="' + name + '"]');
+            if (!row) return;
+            row.classList.remove("is-locked");
+            row.classList.add("is-available");
+            var text = row.querySelector(".tool-status-text");
+            if (text) text.textContent = "available";
+        });
+    }
+
+    // intro is always available.
+    registerIntro();
+
+    // getPersonalInfo and showPages need a verified client certificate.
+    // /webmcp/auth returns 200 only when nginx reports ssl_client_verify = SUCCESS.
+    fetch("/webmcp/auth", { method: "GET", credentials: "same-origin" })
+        .then(function (res) {
+            if (!res.ok) throw new Error("no client certificate");
+            return res.json();
+        })
+        .then(function (data) {
+            if (!data || data.verified !== true) throw new Error("no client certificate");
+            registerPersonalInfo();
+            registerShowPages();
+            markAvailable(["getPersonalInfo", "showPages"]);
+        })
+        .catch(function () {
+            // No certificate: the two tools stay greyed out and unregistered.
+        });
+})();
+</script>
+
 </body>
 </html>
