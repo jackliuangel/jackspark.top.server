@@ -14,6 +14,9 @@
 
 set -u
 
+# Tests must not spam the captain's iCloud Reminders list with test links.
+export SKIP_REMINDER=1
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOWNLOAD_SCRIPT="$SCRIPT_DIR/../video_download_pro.sh"
 COOKIES_FILE="$SCRIPT_DIR/../cookies-youtube.txt"

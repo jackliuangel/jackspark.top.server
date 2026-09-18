@@ -22,3 +22,5 @@ ytdl/*.bak*
 
 /tests/reports/
 
+notes/*.bak*
+notes/__pycache__/

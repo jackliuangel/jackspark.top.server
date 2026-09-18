@@ -110,6 +110,31 @@ upload_to_icloud() {
     fi
 }
 
+# Create an iCloud Reminder whose content is the finished download link (best-effort).
+# Skipped when SKIP_REMINDER=1 (the test suite sets it so tests do not spam the list).
+create_reminder_for_link() {
+    local link="$1"
+    [ "${SKIP_REMINDER:-0}" = "1" ] && { log "reminder skipped (SKIP_REMINDER=1)"; return 0; }
+
+    local reminder_script="$SCRIPT_DIR/../notes/create_reminder.py"
+    local venv_python="/home/ubuntu/.local/venvs/icloud/bin/python"
+    if [ ! -f "$reminder_script" ]; then
+        log "reminder skipped: $reminder_script not found"
+        return 0
+    fi
+    if [ ! -x "$venv_python" ]; then
+        log "reminder skipped: $venv_python not found"
+        return 0
+    fi
+
+    log "Creating reminder for download link: $link"
+    if timeout 120 "$venv_python" "$reminder_script" "$link" >> "$LOG_FILE" 2>&1; then
+        log "reminder created"
+    else
+        log "reminder creation FAILED (download result unaffected)"
+    fi
+}
+
 # Function to get quality label for filename
 get_quality_label() {
     local quality="$1"
@@ -605,6 +630,9 @@ process_download_result() {
             # Upload to iCloud Drive
             upload_to_icloud "$DOWNLOADED_VIDEO"
             
+            # Create a Reminder containing the download link (best-effort)
+            create_reminder_for_link "$DOWNLOAD_HTTP_URL"
+
             # Generate platform-independent JSON output (original url, video title, download url)
             echo "{"
             echo "  \"video_source_url\": $(json_escape "$URL"),"
@@ -639,6 +667,9 @@ process_download_result() {
                 # Upload to iCloud Drive
                 upload_to_icloud "$DOWNLOADED_VIDEO"
                 
+                # Create a Reminder containing the download link (best-effort)
+                create_reminder_for_link "$DOWNLOAD_HTTP_URL"
+
                 # Generate platform-independent JSON output (original url, video title, download url)
                 echo "{"
                 echo "  \"video_source_url\": $(json_escape "$URL"),"
