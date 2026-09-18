@@ -286,27 +286,60 @@ check_prerequisites() {
         log "WARNING: yt-dlp version $installed_ver differs from pinned/tested version $YTDLP_PINNED_VERSION; keep the tested version or re-verify the pin"
     fi
     
+    # Cookies: yt-dlp REWRITES the file passed to --cookies when it exits, which can
+    # blank the original (observed 2026-09-18). Protect the source:
+    #   1) auto-restore from the pristine <file>.orig when the source is empty/missing
+    #   2) hand yt-dlp a per-run temp copy so the source is never touched
+    local cookies_src="$COOKIES_FILE"
+    if [ ! -s "$cookies_src" ] && [ -s "$cookies_src.orig" ]; then
+        log "WARNING: cookies file empty/missing; restoring from $cookies_src.orig"
+        cp -f "$cookies_src.orig" "$cookies_src"
+    fi
+
     # Check cookies file based on platform
-    if [ ! -f "$COOKIES_FILE" ]; then
+    if [ ! -f "$cookies_src" ]; then
         if [ "$platform" = "youtube" ]; then
-            log "ERROR: YouTube cookies file does not exist at $COOKIES_FILE"
-            echo "ERROR: YouTube cookies file not found at $COOKIES_FILE"
+            log "ERROR: YouTube cookies file does not exist at $cookies_src"
+            echo "ERROR: YouTube cookies file not found at $cookies_src"
             exit 1
         else
             # For Bilibili, warn but continue
-            log "WARNING: Bilibili cookies file does not exist at $COOKIES_FILE"
-            echo "WARNING: Cookies file not found at $COOKIES_FILE"
+            log "WARNING: Bilibili cookies file does not exist at $cookies_src"
+            echo "WARNING: Cookies file not found at $cookies_src"
             echo "Some bilibili videos may not be accessible without cookies."
-            echo "Please export your bilibili cookies and save to: $COOKIES_FILE"
+            echo "Please export your bilibili cookies and save to: $cookies_src"
             echo ""
             echo "Continuing without cookies..."
             COOKIES_OPTION=()
             return 0
         fi
     fi
-    
-    log "Using cookies file: $COOKIES_FILE"
-    COOKIES_OPTION=(--cookies "$COOKIES_FILE")
+
+    # Empty file is as useless as a missing one; fail loudly instead of letting
+    # yt-dlp emit a cryptic "does not look like a Netscape format" error.
+    if [ ! -s "$cookies_src" ]; then
+        log "ERROR: cookies file is empty: $cookies_src"
+        echo "ERROR: cookies file is empty: $cookies_src"
+        echo "Re-export your cookies (and keep a pristine copy at $cookies_src.orig)."
+        if [ "$platform" = "youtube" ]; then
+            exit 1
+        fi
+        COOKIES_OPTION=()
+        return 0
+    fi
+
+    mkdir -p "$BASE_LOG_DIR"
+    COOKIES_TMP="$(mktemp "${BASE_LOG_DIR}/cookies-run-XXXXXX.txt")"
+    cp -f "$cookies_src" "$COOKIES_TMP"
+    # Remove the per-run copy when this run ends (yt-dlp's write-back lands here).
+    trap 'rm -f "${COOKIES_TMP:-}"' EXIT
+
+    log "Using cookies file: $cookies_src (per-run copy: $COOKIES_TMP)"
+    COOKIES_OPTION=(--cookies "$COOKIES_TMP")
+    # Point every downstream use (including the direct --cookies "$COOKIES_FILE"
+    # calls in download_youtube / metadata passes) at the throwaway copy, so
+    # yt-dlp's write-back can never damage the real cookies file again.
+    COOKIES_FILE="$COOKIES_TMP"
 }
 
 # Function to get PO token args
