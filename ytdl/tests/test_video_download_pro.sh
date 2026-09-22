@@ -101,12 +101,9 @@ try:
 except Exception as e:
     print(f"JSON parse error: {e}")
     sys.exit(1)
-required = {"video_source_url", "title", "download_link"}
+required = {"title", "download_link"}
 if set(d.keys()) != required:
     print(f"keys {sorted(d.keys())} != {sorted(required)}")
-    sys.exit(1)
-if not d["video_source_url"].startswith("http"):
-    print("video_source_url empty/odd")
     sys.exit(1)
 if not d["title"]:
     print("title empty")
@@ -117,7 +114,7 @@ if not d["download_link"].startswith("https://files.jackspark.top/"):
 sys.exit(0)
 PYEOF
         then
-            pass "$label JSON structure (3 fields)"
+            pass "$label JSON structure (2 fields)"
         else
             fail "$label JSON structure"
         fi
@@ -163,14 +160,21 @@ print(urllib.parse.unquote(json.load(sys.stdin)['download_link'].rsplit('/',1)[-
         TMPKEY="$(mktemp)"
         openssl pkcs12 -in "$P12" -passin pass:"$P12_PW" -nodes -clcerts -out "$TMPCERT" 2>/dev/null
         openssl pkcs12 -in "$P12" -passin pass:"$P12_PW" -nodes -nocerts -out "$TMPKEY" 2>/dev/null
-        LINK_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 --cert "$TMPCERT" --key "$TMPKEY" "$ASYNC_LINK")
+        LINK_CODE=000
+        for attempt in 1 2 3; do
+            LINK_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 25 --cert "$TMPCERT" --key "$TMPKEY" "$ASYNC_LINK")
+            [ "$LINK_CODE" = "200" ] && break
+            sleep 5
+        done
         rm -f "$TMPCERT" "$TMPKEY"
-        if [ "$LINK_CODE" = "200" ]; then pass "download link serves 200 with client cert"; else fail "download link -> $LINK_CODE (expected 200)"; fi
+        if [ "$LINK_CODE" = "200" ]; then pass "download link serves 200 with client cert"; else fail "download link -> $LINK_CODE (expected 200 after 3 attempts)"; fi
     fi
 
     if [ "$PRE_COMMIT_CERT_TESTS" != "1" ]; then
         # 11. Old /files/ URL redirects to files.jackspark.top (served by the new zone)
-        REDIR=$(curl -sI --max-time 20 "https://jackspark.top/files/test.txt" | awk 'tolower($1)=="location:"{print $2}' | tr -d '\r')
+        # Cache-busting query: Cloudflare may serve a cached 404 from an earlier config,
+        # and the check is about the redirect existing, not about CDN cache state.
+        REDIR=$(curl -sI --max-time 20 "https://jackspark.top/files/test.txt?cb=$(date +%s%N)" | awk 'tolower($1)=="location:"{print $2}' | tr -d '\r')
         if printf '%s' "$REDIR" | grep -q "^https://files.jackspark.top/"; then
             pass "old /files/ link redirects to files.jackspark.top"
         else

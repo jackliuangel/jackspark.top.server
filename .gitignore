@@ -24,3 +24,5 @@ ytdl/*.bak*
 
 notes/*.bak*
 notes/__pycache__/
+ytdl/cookies-*.orig
+ytdl/cookies-*.empty-*

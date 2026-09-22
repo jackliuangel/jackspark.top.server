@@ -668,7 +668,6 @@ process_download_result() {
 
             # Generate platform-independent JSON output (original url, video title, download url)
             echo "{"
-            echo "  \"video_source_url\": $(json_escape "$URL"),"
             echo "  \"title\": $(json_escape "$VIDEO_TITLE"),"
             echo "  \"download_link\": $(json_escape "$DOWNLOAD_HTTP_URL")"
             echo "}"
@@ -705,7 +704,6 @@ process_download_result() {
 
                 # Generate platform-independent JSON output (original url, video title, download url)
                 echo "{"
-                echo "  \"video_source_url\": $(json_escape "$URL"),"
                 echo "  \"title\": $(json_escape "$VIDEO_TITLE"),"
                 echo "  \"download_link\": $(json_escape "$DOWNLOAD_HTTP_URL")"
                 echo "}"
@@ -797,7 +795,6 @@ async_download_and_exit() {
     download_http_url="https://files.jackspark.top/$(url_encode "$file_name")"
 
     echo "{"
-    echo "  \"video_source_url\": $(json_escape "$URL"),"
     echo "  \"title\": $(json_escape "$raw_title"),"
     echo "  \"download_link\": $(json_escape "$download_http_url")"
     echo "}"
