@@ -54,6 +54,16 @@ if not code:
 
 ok = api.validate_2fa_code(code)
 if not ok:
+    method = getattr(api, "two_factor_delivery_method", None)
+    print(f"NOTE: validate_2fa_code failed (delivery method={method}); trying the SMS endpoint", flush=True)
+    try:
+        api._validate_sms_code(code)
+        ok = True
+        print("NOTE: SMS-endpoint validation succeeded", flush=True)
+    except Exception as e:
+        print(f"NOTE: SMS-endpoint validation failed: {e}", flush=True)
+
+if not ok:
     print("RESULT: CODE_REJECTED", flush=True)
     sys.exit(3)
 
