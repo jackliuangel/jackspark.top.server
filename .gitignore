@@ -26,3 +26,5 @@ notes/*.bak*
 notes/__pycache__/
 ytdl/cookies-*.orig
 ytdl/cookies-*.empty-*
+
+mtls-cert/
