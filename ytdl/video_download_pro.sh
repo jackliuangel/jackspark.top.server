@@ -149,10 +149,11 @@ get_quality_label() {
             echo "1080p"
             ;;
         4|"4k")
-            echo "4k"
+            # 4k 选项已并入 1080p H.264（Apple 兼容优先）
+            echo "1080p"
             ;;
         *)
-            echo "best"
+            echo "1080p"
             ;;
     esac
 }
@@ -162,22 +163,21 @@ get_youtube_format_selector() {
     local quality="$1"
     case "$quality" in
         1|"360p")
-            # 优先 360p MP4，否则选 360p 任意格式
-            echo "bv*[height<=360][ext=mp4]+ba[ext=m4a]/bv*[height<=360]+ba/b[height<=360]/best"
+            # 优先 360p H.264 (avc1) + AAC，Apple 设备兼容性最好
+            echo "bv*[height<=360][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=360][ext=mp4]+ba[ext=m4a]/b[height<=360]/best"
             ;;
         2|"720p")
-            # 优先 720p MP4
-            echo "bv*[height<=720][ext=mp4]+ba[ext=m4a]/bv*[height<=720]+ba/b[height<=720]/best"
+            # 优先 720p H.264 (avc1) + AAC
+            echo "bv*[height<=720][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=720][ext=mp4]+ba[ext=m4a]/b[height<=720]/best"
             ;;
         3|"1080p")
-            # 优先 1080p MP4 (avc1 编码兼容性最好)
+            # 优先 1080p H.264 (avc1) + AAC (iOS/QuickTime 原生支持，字幕渲染正常)
             echo "bv*[height<=1080][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=1080][ext=mp4]+ba[ext=m4a]/bv*[height<=1080]+ba/b[height<=1080]/best"
             ;;
         *)
-            # Default: Select the best single-file format (prevents issues when ffmpeg is missing)
-            # Or bestvideo+bestaudio if they can be merged. Without ffmpeg, yt-dlp will fallback to 
-            # single-file best or download two files.
-            echo "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
+            # 默认：1080p H.264 + AAC，不取更高分辨率/AV1/VP9
+            # Apple 设备原生解码，字幕轨 mov_text 正常显示
+            echo "bv*[height<=1080][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=1080][ext=mp4]+ba[ext=m4a]/bv*[height<=1080]+ba/b[height<=1080]/best"
             ;;
     esac
 }
@@ -187,19 +187,17 @@ get_bilibili_format_selector() {
     local quality="$1"
     case "$quality" in
         1|"360p")
-            echo "bv*[height<=360]+ba/b[height<=360]/worst"
+            echo "bv*[height<=360][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=360]+ba/b[height<=360]/worst"
             ;;
         2|"720p")
-            echo "bv*[height<=720]+ba/b[height<=720]/b"
+            echo "bv*[height<=720][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=720]+ba/b[height<=720]/b"
             ;;
-        3|"1080p")
-            echo "bv*[height<=1080]+ba/b[height<=1080]/b"
-            ;;
-        4|"4k")
-            echo "bv*[height<=2160]+ba/b[height<=2160]/best"
+        3|"1080p"|"4k")
+            echo "bv*[height<=1080][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=1080]+ba/b[height<=1080]/b"
             ;;
         *)
-            echo "bv*+ba/b/best"
+            # 默认：1080p H.264 + AAC（Apple 设备兼容）
+            echo "bv*[height<=1080][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=1080]+ba/b[height<=1080]/b"
             ;;
     esac
 }

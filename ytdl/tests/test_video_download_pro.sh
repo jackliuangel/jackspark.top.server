@@ -56,8 +56,22 @@ source "$DOWNLOAD_SCRIPT"
 check_eq "quality 1 -> 360p" "360p" "$(get_quality_label 1)"
 check_eq "quality 2 -> 720p" "720p" "$(get_quality_label 2)"
 check_eq "quality 3 -> 1080p" "1080p" "$(get_quality_label 3)"
-check_eq "quality 4 -> 4k" "4k" "$(get_quality_label 4)"
-check_eq "quality empty -> best" "best" "$(get_quality_label "")"
+check_eq "quality 4 -> 1080p" "1080p" "$(get_quality_label 4)"
+check_eq "quality empty -> 1080p" "1080p" "$(get_quality_label "")"
+
+# 3b. Format selectors must stay Apple-compatible (H.264 <=1080p)
+for q in "" 1 2 3 4; do
+    sel=$(get_youtube_format_selector "$q")
+    case "$sel" in
+        *avc1*) ;;
+        *) fail "youtube selector for q='$q' does not prefer avc1: $sel" ;;
+    esac
+    case "$sel" in
+        *2160*|*bestvideo*) fail "youtube selector for q='$q' is not capped at 1080p: $sel" ;;
+    esac
+done
+check_eq "youtube default prefers avc1" "yes" "$( \
+    case "$(get_youtube_format_selector "")" in *height\<=1080*vcodec\^=avc1*) echo yes;; *) echo no;; esac)"
 
 # 4. Title sanitization (must match yt-dlp --replace-in-metadata used by the download)
 check_eq "sanitize chinese title" "为什么“信息”才是宇宙最基本的组成单元信息熵信息守恒" "$(sanitize_title "为什么“信息”才是宇宙最基本的组成单元？信息熵、信息守恒")"
